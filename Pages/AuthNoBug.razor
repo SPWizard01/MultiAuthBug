@@ -1,0 +1,22 @@
+﻿@using Microsoft.AspNetCore.Authorization;
+@using Microsoft.AspNetCore.Components.Authorization
+@page "/AuthNoBug"
+@attribute [Authorize("Entra")]
+
+Hello, @UserName!
+<br />
+Note identity at the TOP RIGHT matches this one!
+
+@code {
+    private string UserName = "Test User";
+    [Inject]
+    public AuthenticationStateProvider AuthProvider { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var usr = (await AuthProvider.GetAuthenticationStateAsync()).User;
+        UserName = usr.Identity.Name;
+        await base.OnInitializedAsync();
+    }
+}
