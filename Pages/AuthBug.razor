@@ -1,15 +1,17 @@
 ﻿@using Microsoft.AspNetCore.Authorization;
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Diagnostics;
 @page "/AuthBug"
 @attribute [Authorize("Entra")]
 @attribute [RenderModeServer]
 
 Hello, @UserName!
 <br />
-Note identity at the TOP RIGHT!
+Note identity at the TOP RIGHT! Does not match!
 
 @code {
     private string UserName = "Test User";
+    private int OnInitializedAsyncFired = 0;
     [Inject]
     public AuthenticationStateProvider AuthProvider { get; set; }
 
@@ -18,6 +20,8 @@ Note identity at the TOP RIGHT!
     {
         var usr = (await AuthProvider.GetAuthenticationStateAsync()).User;
         UserName = usr.Identity.Name;
+        //note how many times this break point is hit
+        Debugger.Break();
         await base.OnInitializedAsync();
     }
 }
